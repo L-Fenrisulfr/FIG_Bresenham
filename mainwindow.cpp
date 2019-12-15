@@ -122,16 +122,60 @@ void MainWindow::resetAllColorsAndThickness(MyMesh* _mesh)
     }
 }
 
+void MainWindow::test()
+{
+    resetAllColorsAndThickness(&mesh);
+
+    generateMatrix(&mesh, 2);
+
+    printMatrix(&mesh);
+    //printVertices(&mesh);
+    printVertex(&mesh, myMatrix.first(), MyMesh::Color(0, 255, 0));
+    printVertex(&mesh, myMatrix.last(), MyMesh::Color(255, 0, 0));
+    displayMesh(&mesh);
+}
+
 void MainWindow::generateMatrix(MyMesh *_mesh, unsigned int square_matrix)
 {
-    qDebug() << "1 : " << myMatrix.capacity();
+    qDebug() << "myMatrix capacity : " << myMatrix.capacity();
     myMatrix.reserve( static_cast<int>( pow(square_matrix, 2) ) );
     for (float x = 0; x < square_matrix; x++) {
         for (float y = 0; y < square_matrix; y++) {
-            myMatrix.push_back(QVector3D(x, y, 0.0f));
+            //myMatrix.push_back(QVector3D(x, y, 0.0f));
+            myMatrix.push_back(_mesh->add_vertex(MyMesh::Point(x, y, 0.0f)));
         }
     }
-    qDebug() << "2 : " << myMatrix.capacity();
+    qDebug() << "myMatrix capacity : " << myMatrix.capacity();
+}
+
+void MainWindow::printMatrix(MyMesh* _mesh)
+{
+    qDebug() << __FUNCTION__ << " :";
+    QVectorIterator<MyMesh::VertexHandle> v_it(myMatrix);
+    while (v_it.hasNext()) {
+        MyMesh::VertexHandle vh = v_it.next();
+        /*_mesh->data(vh).thickness = 2;
+        _mesh->set_color(vh, MyMesh::Color(0, 0, 0));*/
+        printVertex(_mesh, vh, MyMesh::Color(0, 0, 0));
+        qDebug() << vh.idx();
+    }
+}
+
+void MainWindow::printVertices(MyMesh *_mesh)
+{
+    qDebug() << __FUNCTION__ << " :";
+    for (MyMesh::VertexIter v_it = _mesh->vertices_sbegin(); v_it != _mesh->vertices_end(); v_it++) {
+        /*_mesh->data(*v_it).thickness = 2;
+        _mesh->set_color(*v_it, MyMesh::Color(0, 0, 0));*/
+        printVertex(_mesh, *v_it, MyMesh::Color(0, 0, 0));
+        qDebug() << v_it->idx();
+    }
+}
+
+void MainWindow::printVertex(MyMesh *_mesh, MyMesh::VertexHandle vh, MyMesh::Color color)
+{
+    _mesh->data(vh).thickness = 6;
+    _mesh->set_color(vh, color);
 }
 
 // charge un objet MyMesh dans l'environnement OpenGL

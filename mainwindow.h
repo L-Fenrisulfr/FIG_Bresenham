@@ -43,7 +43,14 @@ public:
     void displayMesh(MyMesh *_mesh, bool isTemperatureMap = false, float mapRange = -1);
     void resetAllColorsAndThickness(MyMesh* _mesh);
 
+    // --- test ---
+    void test();
+
+    // --- branch Function_generateMatrix ---
     void generateMatrix(MyMesh* _mesh, unsigned int square_matrix);
+    void printMatrix(MyMesh* _mesh);
+    void printVertices(MyMesh* _mesh);
+    void printVertex(MyMesh* _mesh, MyMesh::VertexHandle vh, MyMesh::Color color);
 
 private slots:
     void on_pushButton_chargement_clicked();
@@ -56,7 +63,8 @@ private:
 
     Ui::MainWindow *ui;
 
-    QVector<QVector3D> myMatrix;
+    //QVector<QVector3D> myMatrix;
+    QVector<MyMesh::VertexHandle> myMatrix;
 };
 
 #endif // MAINWINDOW_H
