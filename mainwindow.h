@@ -5,6 +5,8 @@
 #include <QMainWindow>
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
+#include <QVector>
+#include <QVector3D>
 
 namespace Ui {
 class MainWindow;
@@ -41,6 +43,8 @@ public:
     void displayMesh(MyMesh *_mesh, bool isTemperatureMap = false, float mapRange = -1);
     void resetAllColorsAndThickness(MyMesh* _mesh);
 
+    void generateMatrix(MyMesh* _mesh, unsigned int square_matrix);
+
 private slots:
     void on_pushButton_chargement_clicked();
 
@@ -51,6 +55,8 @@ private:
     MyMesh mesh;
 
     Ui::MainWindow *ui;
+
+    QVector<QVector3D> myMatrix;
 };
 
 #endif // MAINWINDOW_H

@@ -26,6 +26,9 @@ void MainWindow::on_pushButton_chargement_clicked()
 // exemple pour construire un mesh face par face
 void MainWindow::on_pushButton_generer_clicked()
 {
+
+    generateMatrix(&mesh, 2);
+    /*
     MyMesh mesh;
 
     // on construit une liste de sommets
@@ -92,7 +95,7 @@ void MainWindow::on_pushButton_generer_clicked()
     resetAllColorsAndThickness(&mesh);
 
     // on affiche le maillage
-    displayMesh(&mesh);
+    displayMesh(&mesh);*/
 
 }
 
@@ -120,6 +123,18 @@ void MainWindow::resetAllColorsAndThickness(MyMesh* _mesh)
         _mesh->data(*curEdge).thickness = 1;
         _mesh->set_color(*curEdge, MyMesh::Color(0, 0, 0));
     }
+}
+
+void MainWindow::generateMatrix(MyMesh *_mesh, unsigned int square_matrix)
+{
+    qDebug() << "1 : " << myMatrix.capacity();
+    myMatrix.reserve( static_cast<int>( pow(square_matrix, 2) ) );
+    for (float x = 0; x < square_matrix; x++) {
+        for (float y = 0; y < square_matrix; y++) {
+            myMatrix.push_back(QVector3D(x, y, 0.0f));
+        }
+    }
+    qDebug() << "2 : " << myMatrix.capacity();
 }
 
 // charge un objet MyMesh dans l'environnement OpenGL
