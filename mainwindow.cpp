@@ -25,10 +25,7 @@ void MainWindow::on_pushButton_chargement_clicked()
 
 // exemple pour construire un mesh face par face
 void MainWindow::on_pushButton_generer_clicked()
-{
-
-    //generateMatrix(&mesh, 2);
-
+{    
     MyMesh mesh;
 
     // on construit une liste de sommets
