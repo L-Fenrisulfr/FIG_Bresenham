@@ -7,6 +7,7 @@
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
 #include <QVector>
 #include <QVector3D>
+//#include "matrix.h"
 
 namespace Ui {
 class MainWindow;
@@ -52,6 +53,9 @@ public:
     void printVertices(MyMesh* _mesh);
     void printVertex(MyMesh* _mesh, MyMesh::VertexHandle vh, MyMesh::Color color);
 
+    // --- branch Function_lineBresenhamAlgorithm ---
+    void lineBresenhamAlgorithm(MyMesh* _mesh, MyMesh::VertexHandle vh1, MyMesh::VertexHandle vh2);
+
 private slots:
     void on_pushButton_chargement_clicked();
 
@@ -65,6 +69,7 @@ private:
 
     //QVector<QVector3D> myMatrix;
     QVector<MyMesh::VertexHandle> myMatrix;
+    //Matrix matrix;
 };
 
 #endif // MAINWINDOW_H

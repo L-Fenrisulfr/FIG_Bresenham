@@ -26,6 +26,7 @@ void MainWindow::on_pushButton_chargement_clicked()
 // exemple pour construire un mesh face par face
 void MainWindow::on_pushButton_generer_clicked()
 {
+    test();
     /*MyMesh mesh;
 
     // on construit une liste de sommets
@@ -126,19 +127,52 @@ void MainWindow::test()
 {
     resetAllColorsAndThickness(&mesh);
 
-    generateMatrix(&mesh, 2);
+    generateMatrix(&mesh, 10);
+    /*  3x3
+      y [   2   5   8   ]
+      ^ [   1   4   7   ]
+      | [   0   3   6   ]
+        -> x
+    */
 
     printMatrix(&mesh);
     //printVertices(&mesh);
-    printVertex(&mesh, myMatrix.first(), MyMesh::Color(0, 255, 0));
-    printVertex(&mesh, myMatrix.last(), MyMesh::Color(255, 0, 0));
+
+    qDebug() << "nb vertices : : " << mesh.n_vertices();
+    unsigned int id1 = 1;
+    unsigned int id2 = 98;
+
+    /*printVertex(&mesh, myMatrix.takeAt(1), MyMesh::Color(0, 255, 0)); // vert
+    printVertex(&mesh, myMatrix.takeAt(17), MyMesh::Color(255, 0, 0)); // rouge
+    qDebug() << "p : : " << mesh.point(myMatrix.takeAt(1))[0] << mesh.point(myMatrix.takeAt(1))[1];
+    qDebug() << "p : : " << mesh.point(myMatrix.takeAt(17))[0] << mesh.point(myMatrix.takeAt(17))[1];*/
+
+
+    printVertex(&mesh, mesh.vertex_handle(id1), MyMesh::Color(255, 255, 0)); // jaune
+    printVertex(&mesh, mesh.vertex_handle(id2), MyMesh::Color(0, 255, 255)); // cyan
+    qDebug() << "p : : " << mesh.point(mesh.vertex_handle(id1))[0] << mesh.point(mesh.vertex_handle(id1))[1];
+    qDebug() << "p : : " << mesh.point(mesh.vertex_handle(id2))[0] << mesh.point(mesh.vertex_handle(id2))[1];
+
+    MyMesh::VertexHandle vh1 = mesh.vertex_handle(id1);
+    MyMesh::VertexHandle vh2 = mesh.vertex_handle(id2);
+    //lineBresenhamAlgorithm(&mesh, myMatrix.takeAt(0), myMatrix.takeAt(17));
+    lineBresenhamAlgorithm(&mesh, vh1, vh2);
     displayMesh(&mesh);
 }
 
 void MainWindow::generateMatrix(MyMesh *_mesh, unsigned int square_matrix)
 {
+    /*matrix = Matrix(square_matrix);
+    int id = 0;
+    for (unsigned int x = 0; x < square_matrix; x++) {
+        for (unsigned int y = 0; y < square_matrix; y++) {
+            matrix.setTo(x, y, id);
+            id ++;
+        }
+    }*/
+
     qDebug() << "myMatrix capacity : " << myMatrix.capacity();
-    myMatrix.reserve( static_cast<int>( pow(square_matrix, 2) ) );
+    //myMatrix.reserve( static_cast<int>( pow(square_matrix, 2) ) );
     for (float x = 0; x < square_matrix; x++) {
         for (float y = 0; y < square_matrix; y++) {
             //myMatrix.push_back(QVector3D(x, y, 0.0f));
@@ -157,7 +191,7 @@ void MainWindow::printMatrix(MyMesh* _mesh)
         /*_mesh->data(vh).thickness = 2;
         _mesh->set_color(vh, MyMesh::Color(0, 0, 0));*/
         printVertex(_mesh, vh, MyMesh::Color(0, 0, 0));
-        qDebug() << vh.idx();
+        qDebug() << "id : : " << vh.idx() << " || x, y : : " << _mesh->point(vh)[0] << _mesh->point(vh)[1];
     }
 }
 
@@ -168,7 +202,7 @@ void MainWindow::printVertices(MyMesh *_mesh)
         /*_mesh->data(*v_it).thickness = 2;
         _mesh->set_color(*v_it, MyMesh::Color(0, 0, 0));*/
         printVertex(_mesh, *v_it, MyMesh::Color(0, 0, 0));
-        qDebug() << v_it->idx();
+        qDebug() << "id : : " << v_it->idx() << " || x, y : : " << _mesh->point(*v_it)[0] << _mesh->point(*v_it)[1];
     }
 }
 
@@ -176,6 +210,53 @@ void MainWindow::printVertex(MyMesh *_mesh, MyMesh::VertexHandle vh, MyMesh::Col
 {
     _mesh->data(vh).thickness = 6;
     _mesh->set_color(vh, color);
+}
+
+void MainWindow::lineBresenhamAlgorithm(MyMesh* _mesh, MyMesh::VertexHandle vh1, MyMesh::VertexHandle vh2)
+{
+    /*  3x3
+      y [   2   5   8   ]
+      ^ [   1   4   7   ]
+      | [   0   3   6   ]
+        -> x
+    */
+    int x1 = static_cast<int>( _mesh->point(vh1)[0] );
+    int y1 = static_cast<int>( _mesh->point(vh1)[1] );
+    int x2 = static_cast<int>( _mesh->point(vh2)[0] );
+    int y2 = static_cast<int>( _mesh->point(vh2)[1] );
+    qDebug() << "x1, y1 : : " << x1 << y1 << " || x2, y2 : : " << x2 << y2;
+
+    int x, y, dx, dy;
+    double e, e_1_0, e_0_1; // error value and incrementals
+
+    dy = static_cast<int>( y2 - y1 );
+    dx = static_cast<int>( x2 - x1 );
+    y = static_cast<int>( y1 ); // range init
+    e = 0.0; // error value init
+    e_1_0 = static_cast<double>( dy ) / static_cast<double> ( dx );
+    e_0_1 = -1.0;
+    qDebug() << "dx, dy : : " << dx << dy << dy / dx;
+    qDebug() << "e : : " << e << " || e_1_0 : : " << e_1_0 << " || e_0_1 : : " << e_0_1;
+
+    double size_matrix_square = sqrt(_mesh->n_vertices()/*myMatrix.capacity()*/);
+    for (int x = x1; x <= x2; x++) {
+
+        qDebug() << "x : : " << x << " || y : : " << y << " || e : : " << e << " || e_1_0 0_1 : : " << e_1_0 << e_0_1;
+        unsigned int id_v = static_cast<unsigned int>( y + x * size_matrix_square );
+        qDebug() << "id_v : : " << id_v;
+
+        printVertex(_mesh, _mesh->vertex_handle(id_v), MyMesh::Color(0, 0, 255));
+
+        // error for next vertex with even range
+        e = e + e_1_0;
+        qDebug() << "e : : " << e << " || e_1_0 : : " << e_1_0 << " || e_0_1 : : " << e_0_1;
+        if ( e >= 0.5) {
+            qDebug() << "------------------------";
+            y = y + 1; // instead to choose the next vertex with even range
+            e = e + e_0_1; // adjusting error in new range
+        }
+    }
+    qDebug() << "--- end";
 }
 
 // charge un objet MyMesh dans l'environnement OpenGL
