@@ -133,19 +133,21 @@ void MainWindow::test()
       ^ [   1   4   7   ]
       | [   0   3   6   ]
         -> x
-    */
+    */ //parametrisation et lissage
 
     printMatrix(&mesh);
-    //printVertices(&mesh);
+    printVertices(&mesh);
 
-    qDebug() << "nb vertices : : " << mesh.n_vertices();
+    qDebug() << "nb vertices : : " << mesh.n_vertices() << "|| myMatrix size : : " << myMatrix.size();
     unsigned int id1 = 1;
-    unsigned int id2 = 98;
+    unsigned int id2 = 31;
 
-    /*printVertex(&mesh, myMatrix.takeAt(1), MyMesh::Color(0, 255, 0)); // vert
-    printVertex(&mesh, myMatrix.takeAt(17), MyMesh::Color(255, 0, 0)); // rouge
-    qDebug() << "p : : " << mesh.point(myMatrix.takeAt(1))[0] << mesh.point(myMatrix.takeAt(1))[1];
-    qDebug() << "p : : " << mesh.point(myMatrix.takeAt(17))[0] << mesh.point(myMatrix.takeAt(17))[1];*/
+    printVertex(&mesh, myMatrix.at(id1), MyMesh::Color(0, 255, 0)); // vert
+    printVertex(&mesh, myMatrix.at(id2), MyMesh::Color(255, 0, 0)); // rouge
+     qDebug() << "id matrix : : " << myMatrix.at(id1).idx();
+    qDebug() << "p : : " << mesh.point(myMatrix.at(id1))[0] << mesh.point(myMatrix.takeAt(id1))[1];
+    qDebug() << "p : : " << mesh.point(myMatrix.at(id2))[0] << mesh.point(myMatrix.takeAt(id2))[1];
+    //qDebug() << "p : : " << mesh.point(myMatrix.takeAt(31))[0] << mesh.point(myMatrix.takeAt(31))[1];
 
 
     printVertex(&mesh, mesh.vertex_handle(id1), MyMesh::Color(255, 255, 0)); // jaune
@@ -153,8 +155,10 @@ void MainWindow::test()
     qDebug() << "p : : " << mesh.point(mesh.vertex_handle(id1))[0] << mesh.point(mesh.vertex_handle(id1))[1];
     qDebug() << "p : : " << mesh.point(mesh.vertex_handle(id2))[0] << mesh.point(mesh.vertex_handle(id2))[1];
 
-    MyMesh::VertexHandle vh1 = mesh.vertex_handle(id1);
-    MyMesh::VertexHandle vh2 = mesh.vertex_handle(id2);
+    /*MyMesh::VertexHandle vh1 = mesh.vertex_handle(id1);
+    MyMesh::VertexHandle vh2 = mesh.vertex_handle(id2);*/
+    MyMesh::VertexHandle vh1 = myMatrix.at(id1);
+    MyMesh::VertexHandle vh2 = myMatrix.at(id2);
     //lineBresenhamAlgorithm(&mesh, myMatrix.takeAt(0), myMatrix.takeAt(17));
     lineBresenhamAlgorithm(&mesh, vh1, vh2);
     displayMesh(&mesh);
@@ -171,12 +175,15 @@ void MainWindow::generateMatrix(MyMesh *_mesh, unsigned int square_matrix)
         }
     }*/
 
+    int i = 0;
     qDebug() << "myMatrix capacity : " << myMatrix.capacity();
-    //myMatrix.reserve( static_cast<int>( pow(square_matrix, 2) ) );
+    myMatrix.reserve( static_cast<int>( pow(square_matrix, 2) ) );
     for (float x = 0; x < square_matrix; x++) {
         for (float y = 0; y < square_matrix; y++) {
             //myMatrix.push_back(QVector3D(x, y, 0.0f));
-            myMatrix.push_back(_mesh->add_vertex(MyMesh::Point(x, y, 0.0f)));
+            //myMatrix.push_back(_mesh->add_vertex(MyMesh::Point(x, y, 0.0f)));
+            myMatrix.insert(i, _mesh->add_vertex(MyMesh::Point(x, y, 0.0f)));
+            i++;
         }
     }
     qDebug() << "myMatrix capacity : " << myMatrix.capacity();
@@ -188,8 +195,6 @@ void MainWindow::printMatrix(MyMesh* _mesh)
     QVectorIterator<MyMesh::VertexHandle> v_it(myMatrix);
     while (v_it.hasNext()) {
         MyMesh::VertexHandle vh = v_it.next();
-        /*_mesh->data(vh).thickness = 2;
-        _mesh->set_color(vh, MyMesh::Color(0, 0, 0));*/
         printVertex(_mesh, vh, MyMesh::Color(0, 0, 0));
         qDebug() << "id : : " << vh.idx() << " || x, y : : " << _mesh->point(vh)[0] << _mesh->point(vh)[1];
     }
